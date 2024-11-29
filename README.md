@@ -13,6 +13,7 @@ Programming Language: Python
 Libraries: Scikit-learn, Numpy, Pandas, NLTK, Matplotlib
 Algorithms: Logistic Regression, Naive Bayes, Random Forest
 Tools: Jupyter Notebook
+
 Dataset
 Source:Kaggle.
 The dataset contains labeled news articles with the fields: title, text, and label (real or fake).
