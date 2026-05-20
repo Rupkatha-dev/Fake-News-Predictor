@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifact - Check News Credibility</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="logo-area">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <h1 id="app-title">Veri<span>fact</span></h1>
+            </div>
+            <p class="subtitle">Check the credibility of news articles before you share. Paste a headline or article to get an instant assessment.</p>
+        </header>
+
+        <main class="app-main">
+            <!-- Left Panel: Input Form & Sample presets -->
+            <section class="panel-left">
+                <div class="glass-card form-card">
+                    <h2 class="section-title"><i class="fa-solid fa-feather-pointed"></i> Analyze Article</h2>
+                    <p class="section-desc">Enter the headline and source to see if the article checks out.</p>
+                    
+                    <form id="news-form" class="prediction-form">
+                        <div class="form-group">
+                            <label for="news-title">News Title <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-heading input-icon"></i>
+                                <input type="text" id="news-title" placeholder="Enter article headline..." required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="news-author">Author / Source <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-user-pen input-icon"></i>
+                                    <input type="text" id="news-author" placeholder="Author name or agency..." required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="news-text">Full Article Text (Optional)</label>
+                            <div class="textarea-wrapper">
+                                <i class="fa-solid fa-align-left textarea-icon"></i>
+                                <textarea id="news-text" rows="5" placeholder="Paste full article text here to extract advanced statistics..."></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submit-btn" class="glow-btn">
+                            <span class="btn-text">Verify News Credibility</span>
+                            <span class="btn-glow-element"></span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sample Library Container -->
+                <div class="presets-section">
+                    <h3 class="presets-title"><i class="fa-solid fa-lightbulb"></i> Try an Example</h3>
+                    <p class="presets-desc">Click any article below to fill the form and see how the model responds.</p>
+                    <div class="presets-grid">
+                        <div class="preset-card real" onclick="loadPreset(0)">
+                            <div class="preset-badge real">Real News</div>
+                            <h4 class="preset-title">NFL Playoffs: Schedule and Matchups</h4>
+                            <p class="preset-author">By Benjamin Hoffman</p>
+                        </div>
+                        <div class="preset-card fake" onclick="loadPreset(1)">
+                            <div class="preset-badge fake">Fake News</div>
+                            <h4 class="preset-title">House Dem Aide: We Didn't Even See Comey's Letter</h4>
+                            <p class="preset-author">By Darrell Lucus</p>
+                        </div>
+                        <div class="preset-card real" onclick="loadPreset(2)">
+                            <div class="preset-badge real">Real News</div>
+                            <h4 class="preset-title">Hillary Clinton, Big Woman on Campus</h4>
+                            <p class="preset-author">By Daniel J. Flynn</p>
+                        </div>
+                        <div class="preset-card fake" onclick="loadPreset(3)">
+                            <div class="preset-badge fake">Fake News</div>
+                            <h4 class="preset-title">Why the Truth Might Get You Fired</h4>
+                            <p class="preset-author">By Consortiumnews.com</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Results & Scanner (Initial State is welcome guide) -->
+            <section class="panel-right">
+                <!-- Welcome/Initial Card -->
+                <div class="glass-card welcome-card" id="welcome-card">
+                    <div class="welcome-icon-container">
+                        <i class="fa-solid fa-network-wired welcome-icon"></i>
+                    </div>
+                    <h2>How It Works</h2>
+                    <ul class="steps-list">
+                        <li>
+                            <div class="step-num">1</div>
+                            <div class="step-content">
+                                <strong>Clean the Text:</strong> We strip out filler words and reduce words to their roots so only the meaningful ones remain.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="step-num">2</div>
+                            <div class="step-content">
+                                <strong>Map the Vocabulary:</strong> The cleaned text is converted into numbers based on how important each word is within the article.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="step-num">3</div>
+                            <div class="step-content">
+                                <strong>Score the Article:</strong> A trained classifier looks at those numbers and estimates how likely the article is to be credible.
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="accuracy-badge-box">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Trained on thousands of articles with <strong>95.5% accuracy</strong>.</span>
+                    </div>
+                </div>
+
+                <!-- Scanner Loading State -->
+                <div class="glass-card scanner-card hidden" id="scanner-card">
+                    <div class="scanner-visual">
+                        <div class="scanner-ring"></div>
+                        <div class="scanner-beam"></div>
+                        <i class="fa-solid fa-fingerprint scan-icon"></i>
+                    </div>
+                    <h3 class="scan-title">Analyzing Article</h3>
+                    <p class="scan-status" id="scan-status">Reading through the text...</p>
+                    <div class="loading-bar-container">
+                        <div class="loading-bar-fill" id="loading-bar-fill"></div>
+                    </div>
+                </div>
+
+                <!-- Prediction Results Dashboard -->
+                <div class="glass-card result-card hidden" id="result-card">
+                    <div class="result-header">
+                        <div class="result-badge" id="result-badge">
+                            <i class="fa-solid" id="result-badge-icon"></i>
+                            <span id="result-badge-text">VERIFIED REAL</span>
+                        </div>
+                        <button class="icon-btn-reset" onclick="resetForm()" title="Scan another article">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Visual Radial Gauge and Score -->
+                    <div class="gauge-section">
+                        <div class="radial-gauge">
+                            <svg class="gauge-svg" viewBox="0 0 100 100">
+                                <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                                <circle class="gauge-fill" id="gauge-fill-arc" cx="50" cy="50" r="40"></circle>
+                            </svg>
+                            <div class="gauge-center">
+                                <span class="gauge-percent" id="result-percent">98%</span>
+                                <span class="gauge-label">Confidence</span>
+                            </div>
+                        </div>
+                        <div class="verdict-box">
+                            <h3 class="verdict-title" id="verdict-title">Credible Source</h3>
+                            <p class="verdict-desc" id="verdict-desc">This article aligns strongly with characteristics of high-integrity news databases.</p>
+                        </div>
+                    </div>
+
+                    <!-- Article Advanced Statistics -->
+                    <div class="stats-section">
+                        <div class="stat-box">
+                            <i class="fa-solid fa-calculator stat-icon"></i>
+                            <span class="stat-val" id="stat-words">0</span>
+                            <span class="stat-lbl">Word Count</span>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fa-solid fa-clock stat-icon"></i>
+                            <span class="stat-val" id="stat-time">0.1m</span>
+                            <span class="stat-lbl">Reading Time</span>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fa-solid fa-font stat-icon"></i>
+                            <span class="stat-val" id="stat-chars">0</span>
+                            <span class="stat-lbl">Characters</span>
+                        </div>
+                    </div>
+
+                    <!-- TF-IDF Weighted Keywords Found -->
+                    <div class="keywords-section">
+                        <h4 class="keywords-title"><i class="fa-solid fa-tags"></i> Core Predictors Analyzed</h4>
+                        <p class="keywords-desc">Linguistic terms from this article that had the highest predictive impact in our ML model:</p>
+                        <div class="keywords-container" id="keywords-container">
+                            <span class="keyword-tag">breitbart</span>
+                            <span class="keyword-tag">sports</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2026 Verifact. Built to help readers think twice before sharing.</p>
+        </footer>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
